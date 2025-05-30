@@ -1,2 +1,4 @@
 captured_images
 filtered_images
+report/*
+emotion_log.csv

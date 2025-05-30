@@ -107,6 +107,7 @@ class EmotionFilterApp:
     def run(self):
         """
         Runs the real-time emotion filter application.
+        Displays all emotion scores and highlights the dominant emotion.
         """
         print("Webcam is running with emotion filters. Press 'q' to quit.")
         while True:
@@ -115,13 +116,24 @@ class EmotionFilterApp:
                 print("Failed to capture frame.")
                 break
 
+            # Apply filter based on dominant emotion
             filtered_frame = self.apply_filter(frame, dominant_emotion)
             filtered_frame = self.display_quote(filtered_frame, dominant_emotion)
 
-            if dominant_emotion:
-                cv2.putText(filtered_frame, f"Dominant Emotion: {dominant_emotion}", (10, 25),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+            # Display all emotion scores (top-left corner)
+            start_y = 40
+            for emotion, score in emotions.items():
+                text = f"{emotion.capitalize()}: {score:.2f}"
+                color = (255, 255, 255)
+                cv2.putText(filtered_frame, text, (10, start_y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 1)
+                start_y += 25
 
+            # Display dominant emotion in large font (top-center)
+            if dominant_emotion:
+                cv2.putText(filtered_frame, f"Dominant: {dominant_emotion.upper()}",
+                            (150, 30), cv2.FONT_HERSHEY_COMPLEX, 1.2, (0, 0, 0), 2)
+
+            # Save every 10th frame with log
             if self.frame_count % 10 == 0:
                 self.save_frame_and_log(filtered_frame, dominant_emotion)
 
